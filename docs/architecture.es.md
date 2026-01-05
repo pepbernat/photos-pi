@@ -1,5 +1,9 @@
 # 📸 PhotoPrism en Raspberry Pi con Azure Blob Storage y Cloudflare Tunnel
 
+[🔙 Volver al README](../README.es.md)
+
+---
+
 ## 1. Objetivo del proyecto
 
 El objetivo de este proyecto es **reemplazar Google Photos** por una solución:
@@ -317,14 +321,14 @@ Esto procesará las fotos en el SSD y las moverá a `/photoprism/originals` (que
 
 ## 11. Acceso remoto con Cloudflare Tunnel
 
-**(Sin cambios en la configuración del túnel, ver sección 8 para docker compose)**
+*(Sin cambios en la configuración del túnel, ver sección 8 para docker compose)*
 
 ---
 
 ## 12. Riesgos y mitigaciones
 
 | Riesgo | Mitigación |
-|-----|-----------|
+| :--- | :--- |
 | Corrupción SD | SSD USB obligatorio |
 | Latencia Azure | Caché VFS + thumbnails locales |
 | Pérdida DB Local | **MariaDB + Backup diario automático a Azure** |

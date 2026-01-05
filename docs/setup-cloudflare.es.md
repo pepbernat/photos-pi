@@ -1,5 +1,9 @@
 # ☁️ Guía de Configuración: Cloudflare Tunnel
 
+[🔙 Volver al README](../README.es.md)
+
+---
+
 Para que tu PhotoPrism sea accesible desde internet de forma segura (<https://fotos.tudominio.com>) sin abrir puertos en tu router, usamos **Cloudflare Tunnel**.
 
 Sigue estos pasos para obtener tu **Token** necesario para el archivo `.env`.
