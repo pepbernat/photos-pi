@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    command: mariadbd --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    volumes:
+      - ${SSD_MOUNT_PATH}/photoprism/database:/var/lib/mysql
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: ${PHOTOPRISM_DATABASE_NAME}
+      MARIADB_USER: ${PHOTOPRISM_DATABASE_USER}
+      MARIADB_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+
+  photoprism:
+    image: photoprism/photoprism:latest
+    container_name: photoprism
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    ports:
+      - "2342:2342"
+    environment:
+      PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD}
+      PHOTOPRISM_SITE_URL: ${PHOTOPRISM_SITE_URL}
+      
+      # Storage Paths
+      PHOTOPRISM_STORAGE_PATH: /photoprism/storage
+      PHOTOPRISM_ORIGINALS_PATH: /photoprism/originals
+      PHOTOPRISM_IMPORT_PATH: /photoprism/import
+      
+      # Database Configuration
+      PHOTOPRISM_DATABASE_DRIVER: mysql
+      PHOTOPRISM_DATABASE_SERVER: mariadb:3306
+      PHOTOPRISM_DATABASE_NAME: ${PHOTOPRISM_DATABASE_NAME}
+      PHOTOPRISM_DATABASE_USER: ${PHOTOPRISM_DATABASE_USER}
+      PHOTOPRISM_DATABASE_PASSWORD: ${PHOTOPRISM_DATABASE_PASSWORD}
+      
+      # AI & Metadata Optimization
+      PHOTOPRISM_DISABLE_FACES: "false"
+      PHOTOPRISM_DISABLE_CLASSIFICATION: "false"
+      PHOTOPRISM_SIDECAR_YAML: "true"
+      PHOTOPRISM_THUMB_FILTER: "lanczos"
+      PHOTOPRISM_DETECT_NSFW: "false"
+      
+      # Performance & Workers (Tuned for Pi)
+      PHOTOPRISM_WORKERS: 2
+      PHOTOPRISM_WAKEUP_INTERVAL: 900
+      
+    volumes:
+      - ${SSD_MOUNT_PATH}/photoprism/storage:/photoprism/storage
+      - ${SSD_MOUNT_PATH}/photoprism/import:/photoprism/import
+      - ${AZURE_MOUNT_PATH}/originals:/photoprism/originals
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
