@@ -53,5 +53,24 @@ sudo chown -R $USER:$USER "${AZURE_MOUNT_PATH}"
 # PhotoPrism usually runs as internal user/group, simply allowing access
 sudo chmod -R 777 "${SSD_MOUNT_PATH}/photoprism"
 
+# 5. Rclone/Fuse Configuration (Critical for Docker access)
+echo "🔧 Configuring FUSE for non-root access..."
+if grep -q "#user_allow_other" /etc/fuse.conf; then
+    sudo sed -i 's/#user_allow_other/user_allow_other/g' /etc/fuse.conf
+    echo "✅ Enabled 'user_allow_other' in /etc/fuse.conf"
+fi
+
+# 6. Increase SWAP (Critical for PhotoPrism on Pi)
+echo "🧠 Checking Swap size..."
+CONF_SWAP="/etc/dphys-swapfile"
+if grep -q "CONF_SWAPSIZE=100" "$CONF_SWAP"; then
+    echo "⚡️ Increasing Swap from 100MB to 2048MB (for AI Indexing stability)..."
+    sudo sed -i 's/CONF_SWAPSIZE=100/CONF_SWAPSIZE=2048/g' "$CONF_SWAP"
+    sudo systemctl restart dphys-swapfile
+    echo "✅ Swap increased."
+else
+    echo "✅ Swap size already adjusted (or custom config found)."
+fi
+
 echo "✅ System setup complete!"
 echo "➡️  Next step: Run 'scripts/setup_rclone.sh' to configure Azure Storage."
