@@ -1,131 +1,156 @@
-# 📸 PhotoPrism on Raspberry Pi (Cloudflare + Azure Blob)
+# 📸 PhotoPrism en Raspberry Pi (Ultimate Edition)
 
-Welcome! This repository contains a **Plug & Play** configuration to run a powerful, self-hosted photo management system on your Raspberry Pi.
+![PhotoPrism + Raspberry Pi](https://img.shields.io/badge/PhotoPrism-Raspberry%20Pi-blue?style=for-the-badge&logo=raspberrypi)
+![Azure Blob Storage](https://img.shields.io/badge/Storage-Azure%20Blob-0078D4?style=for-the-badge&logo=microsoftazure)
+![Cloudflare Tunnel](https://img.shields.io/badge/Access-Cloudflare%20Zero%20Trust-F38020?style=for-the-badge&logo=cloudflare)
 
-It replaces Google Photos with **PhotoPrism**, using **Azure Blob Storage** for unlimited storage and **Cloudflare Tunnel** for secure remote access.
+¡Bienvenido! Este repositorio contiene una configuración **"Plug & Play"** para desplegar tu propio **Google Photos privado** en una Raspberry Pi.
 
-## 🌟 Features
+Olvídate de pagar suscripciones mensuales por almacenamiento limitado. Aquí tú controlas tus datos, con almacenamiento ilimitado en la nube (Azure) y privacidad total.
 
-* **Self-Hosted:** Runs on your Raspberry Pi 4/5.
-* **Unlimited Storage:** Uses Azure Blob Storage (cheap & reliable) for originals and backups.
-* **Performance:** Uses a local SSD for the database (MariaDB) and thumbnails.
-* **Secure:** Accessible via `https://photos.yourdomain.com` without opening router ports.
-* **Smart:** AI-powered facial recognition and object detection.
+---
 
-## 🛠 Prerequisites
+## ✨ ¿Qué ofrece este proyecto?
 
-1. **Raspberry Pi 4 or 5** (4GB RAM min, 8GB recommended).
-2. **USB SSD Drive** (128GB+ recommended) formatted as EXT4 and mounted (e.g., at `/mnt/ssd`).
-3. **Azure Account:** A Storage Account with a Blob Container (e.g., named `photos`).
-4. **Cloudflare Account:** A domain managed by Cloudflare + Zero Trust setup.
+1. **Reemplazo de Google Photos:** Interfaz web preciosa, mapas, detección de caras y búsqueda por IA.
+2. **Almacenamiento Infinito:** Usa Azure Blob Storage (barato y seguro) para guardar los originales. No llenas el disco de tu Pi.
+3. **Acceso Remoto Seguro:** Sin abrir puertos en el router. Tu web será accesible desde cualquier lugar (`https://fotos.tumismo.com`) gracias a Cloudflare.
+4. **Resiliente:** Base de datos en SSD (rápido) + Copias de seguridad automáticas en la nube. ¡A prueba de desastres!
 
-## 🚀 Quick Start Guide
+---
 
-### Step 1: Clone the Repository
+## 🛠️ Requisitos de Hardware
 
-Log in to your Raspberry Pi and clone this repo:
+* **Raspberry Pi 4 o 5** (Min 4GB RAM, Ideal 8GB).
+* **Disco SSD USB** (Min 128GB). *No uses tarjeta SD para los datos, se romperá.*
+* Una cuenta de **Azure** y un dominio en **Cloudflare**.
+
+---
+
+## 🚀 Guía de Instalación Rápida
+
+Sigue estos 5 pasos y lo tendrás funcionando en 15 minutos.
+
+### Paso 1: Clonar el proyecto
+
+Conéctate por SSH a tu Raspberry Pi y descarga este código:
 
 ```bash
 git clone https://github.com/pepbernat/Photos-Pi.git
 cd Photos-Pi
 ```
 
-### Step 2: Prepare the System
+### Paso 2: Preparar el Sistema
 
-Run the system setup script to install Docker, Rclone, and create directories.
+Ejecuta el script automático que instala Docker, Rclone y ajusta los permisos:
 
 ```bash
 ./scripts/setup_system.sh
 ```
 
-### Step 3: Configure Environment
+### Paso 3: Configuración Secreta
 
-Copy the example config and edit it with your secrets.
+Copia la plantilla y pon tus contraseñas:
 
 ```bash
 cp .env.example .env
 nano .env
 ```
 
-*Fill in your database passwords, Azure paths (defaults are likely fine).*
+> 💡 **¿Necesitas el Token de Cloudflare?** Sigue esta [Guía Paso a Paso](cloudflare_setup_guide.md).
 
-👉 **Need the Cloudflare Token?** Read the [Cloudflare Setup Guide](cloudflare_setup_guide.md).
+### Paso 4: Conectar la Nube (Azure)
 
-### Step 4: Setup Azure Storage
-
-Run the guided script to connect your Azure account.
+Ejecuta el asistente para conectar tu almacenamiento:
 
 ```bash
 ./scripts/setup_rclone.sh
 ```
 
-*Follow the prompts (choose 'azureblob', enter account name & key). The script will automatically create a system service to keep it mounted.*
+### Paso 5: ¡Despegue
 
-### Step 5: Launch! 🚀
-
-Start the system with Docker Compose.
+Arranca los motores:
 
 ```bash
 docker compose up -d
 ```
 
-Wait a few minutes (initial database creation takes time).
+Espera unos minutos a que inicie.
 
-* **URL:** `https://photos.yourdomain.com` (or `http://<PI_IP>:2342` locally)
-* **User:** `admin`
-* **Password:** (The one you set in `.env`)
-
----
-
-## 📱 Mobile Experience (App)
-
-PhotoPrism is a **Progressive Web App (PWA)**. It works like a native app without needing an app store.
-
-1. Open your Cloudflare URL (e.g., `https://photos.yourdomain.com`) in Chrome/Safari on your phone.
-2. Tap **Share** (iOS) or **Menu** (Android).
-3. Select **"Add to Home Screen"**.
-4. It will now launch as a full-screen app and sync your photos.
-
-## 💸 Cost Warning (Azure)
-
-While the code is free, **Azure Blob Storage is not**.
-
-* Expect to pay ~$0.18 - $0.20 per GB/year (Cool Tier) or check [Azure Pricing](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/).
-* Example: 1 TB of photos ≈ $15-$20 / month depending on tier and access frequency. Check your budget!
+* **Web:** `http://<IP-DE-TU-PI>:2342` o tu dominio `https://fotos.tumismo.com`
+* **Usuario:** `admin`
+* **Password:** La que pusiste en el `.env`.
 
 ---
 
-## 📥 Importing Photos (Google Takeout)
+## 📱 Experiencia Móvil (Apps)
 
-1. Download your photos from **Google Takeout**.
-2. Unzip them (or keep them as zips, but extraction is recommended first).
-3. Place the files into the **Local Import Folder**:
-    * `/mnt/ssd/photoprism/import`
-4. Run the import command:
+Para disfrutarlo en el móvil como una app nativa, tienes dos opciones:
 
-```bash
-docker compose exec photoprism photoprism import
-```
+### Opción A: Apps Nativas (Comunidad)
 
-*This will move photos from the local import folder to Azure Blob Storage (`/originals`) and index them.*
+Existen excelentes apps creadas por la comunidad:
 
-## 🛡 Backups
+* **Android:** [Gallery for PhotoPrism](https://play.google.com/store/apps/details?id=com.photoprism.gallery) (Recomendada).
+* **iOS:** [PhotoSync](https://www.photosync-app.com/) (Para subir fotos) o usar la PWA.
 
-The system includes a script to backup the database to Azure (so **everything** is in the cloud).
+### Opción B: App Web (PWA Oficial)
 
-**Test backup manually:**
+La interfaz oficial está diseñada para funcionar como una app:
 
-```bash
-./scripts/backup_db.sh
-```
+1. Abre tu web (`https://fotos.tumismo.com`) en Chrome/Safari.
+2. Pulsar **Compartir** (iOS) o **Menú** (Android) -> **"Añadir a Pantalla de Inicio"**.
+3. ¡Listo! Funciona a pantalla completa.
 
-**Setup automatic daily backup:**
-Add this to your crontab (`crontab -e`):
+---
 
-```cron
-0 3 * * * /home/pi/Photos-Pi/scripts/backup_db.sh >> /var/log/photoprism_backup.log 2>&1
-```
+## 📖 Cómo usarlo
 
-## 📂 Architecture
+### 📥 Importar tus fotos de Google
 
-For a deep dive into the design decisions, read the [Architecture Documentation](photo_prism_en_raspberry_pi_con_azure_blob_y_cloudflare_tunnel.md).
+1. Descarga tus fotos desde [Google Takeout](https://takeout.google.com/).
+2. Copia los archivos descomprimidos a la carpeta de importación en tu Pi:
+    * Ruta: `/mnt/ssd/photoprism/import`
+3. Ejecuta el importador:
+
+    ```bash
+    docker compose exec photoprism photoprism import
+    ```
+
+    *Esto moverá las fotos a Azure, las clasificará por fecha y generará las miniaturas.*
+
+### 🔄 Sincronización Automática desde el Móvil
+
+Para que las fotos que haces con el móvil se suban solas (como en Google Photos), recomendamos usar la app **PhotoSync** (iOS/Android) configurada para subir vía WebDAV a tu servidor PhotoPrism.
+
+---
+
+## 🛡️ Seguridad y Recuperación
+
+### 💾 Backups Automáticos
+
+El sistema hace una copia de seguridad de la base de datos **cada noche a las 3 AM** y la sube a Azure (`/backup`).
+
+* **Originales:** Están en Azure (Seguros).
+* **Base de datos:** En Azure (Segura).
+* **Raspberry Pi:** Si se quema, ¡no pierdes nada!
+
+### 🆘 ¿Cómo recuperar todo ante un desastre?
+
+Si tu Raspberry Pi explota, sigue estos pasos:
+
+1. Compra una nueva Pi y repite la instalación (Pasos 1-4).
+2. Asegúrate que Docker está corriendo (`docker compose up -d`).
+3. Ejecuta el script de restauración:
+
+    ```bash
+    ./scripts/restore_db.sh
+    ```
+
+4. El sistema te mostrará los backups disponibles en la nube y restaurará el que elijas.
+
+---
+
+## 🧠 Arquitectura
+
+¿Eres curioso? Consulta el documento de [Arquitectura Técnica](photo_prism_en_raspberry_pi_con_azure_blob_y_cloudflare_tunnel.md) para entender cómo funciona todo por dentro (MariaDB, Cloudflare Tunnels, sistema de caché VFS).
