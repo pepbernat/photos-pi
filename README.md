@@ -47,7 +47,9 @@ cp .env.example .env
 nano .env
 ```
 
-*Fill in your database passwords, Azure paths (defaults are likely fine), and Cloudflare Tunnel Token.*
+*Fill in your database passwords, Azure paths (defaults are likely fine).*
+
+👉 **Need the Cloudflare Token?** Read the [Cloudflare Setup Guide](cloudflare_setup_guide.md).
 
 ### Step 4: Setup Azure Storage
 
@@ -67,7 +69,29 @@ Start the system with Docker Compose.
 docker compose up -d
 ```
 
-Wait a few minutes. Access your photos at `http://<PI_IP_ADDRESS>:2342` or your Cloudflare URL.
+Wait a few minutes (initial database creation takes time).
+
+* **URL:** `https://photos.yourdomain.com` (or `http://<PI_IP>:2342` locally)
+* **User:** `admin`
+* **Password:** (The one you set in `.env`)
+
+---
+
+## 📱 Mobile Experience (App)
+
+PhotoPrism is a **Progressive Web App (PWA)**. It works like a native app without needing an app store.
+
+1. Open your Cloudflare URL (e.g., `https://photos.yourdomain.com`) in Chrome/Safari on your phone.
+2. Tap **Share** (iOS) or **Menu** (Android).
+3. Select **"Add to Home Screen"**.
+4. It will now launch as a full-screen app and sync your photos.
+
+## 💸 Cost Warning (Azure)
+
+While the code is free, **Azure Blob Storage is not**.
+
+* Expect to pay ~$0.18 - $0.20 per GB/year (Cool Tier) or check [Azure Pricing](https://azure.microsoft.com/en-us/pricing/details/storage/blobs/).
+* Example: 1 TB of photos ≈ $15-$20 / month depending on tier and access frequency. Check your budget!
 
 ---
 
