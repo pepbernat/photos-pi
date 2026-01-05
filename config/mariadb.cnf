@@ -1,0 +1,31 @@
+[mariadbd]
+# Basic Safety & Charset
+user = mysql
+pid-file = /run/mysqld/mysqld.pid
+socket = /run/mysqld/mysqld.sock
+basedir = /usr
+datadir = /var/lib/mysql
+tmpdir = /tmp
+lc-messages-dir = /usr/share/mysql
+
+# Character Set (PhotoPrism requirement)
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+transaction-isolation = READ-COMMITTED
+
+# Connection Tuning
+max_connections = 150
+connect_timeout = 5
+wait_timeout = 600
+max_allowed_packet = 64M
+
+# InnoDB Tuning for Raspberry Pi (Limited RAM)
+# 512M is good for Pi 4GB/8GB. Decrease to 256M if on 2GB RAM.
+innodb_buffer_pool_size = 512M
+innodb_log_file_size = 128M
+innodb_flush_log_at_trx_commit = 2  # 1=Safer, 2=Faster (Accepted risk for photos)
+innodb_flush_method = O_DIRECT
+
+# Timeouts to avoid "Lock wait timeout exceeded" during large imports
+innodb_lock_wait_timeout = 120
+innodb_rollback_on_timeout = OFF
