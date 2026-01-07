@@ -3,7 +3,9 @@ set -e
 
 # Load environment variables
 if [ -f .env ]; then
-  export $(cat .env | xargs)
+  set -a
+  source .env
+  set +a
 else
   echo "⚠️  No .env file found."
   exit 1
