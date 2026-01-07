@@ -10,6 +10,8 @@ services:
       - ${SSD_MOUNT_PATH}/immich/thumbs:/usr/src/app/upload/thumbs
       - ${SSD_MOUNT_PATH}/immich/encoded-video:/usr/src/app/upload/encoded-video
       - ${SSD_MOUNT_PATH}/immich/profile:/usr/src/app/upload/profile
+      - ${SSD_MOUNT_PATH}/immich/upload:/usr/src/app/upload/upload
+      - ${SSD_MOUNT_PATH}/immich/backups:/usr/src/app/upload/backups
       - ${AZURE_MOUNT_PATH}:/usr/src/app/external
       - /etc/localtime:/etc/localtime:ro
     env_file:
@@ -33,6 +35,8 @@ services:
       - ${SSD_MOUNT_PATH}/immich/thumbs:/usr/src/app/upload/thumbs
       - ${SSD_MOUNT_PATH}/immich/encoded-video:/usr/src/app/upload/encoded-video
       - ${SSD_MOUNT_PATH}/immich/profile:/usr/src/app/upload/profile
+      - ${SSD_MOUNT_PATH}/immich/upload:/usr/src/app/upload/upload
+      - ${SSD_MOUNT_PATH}/immich/backups:/usr/src/app/upload/backups
       - ${AZURE_MOUNT_PATH}:/usr/src/app/external
       - /etc/localtime:/etc/localtime:ro
     env_file:
