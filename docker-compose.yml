@@ -6,7 +6,7 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     command: [ "start.sh", "immich" ]
     volumes:
-      - ${AZURE_MOUNT_PATH}/immich/upload:/usr/src/app/upload
+      - ${AZURE_MOUNT_PATH}/originals:/usr/src/app/upload
       - ${AZURE_MOUNT_PATH}:/usr/src/app/external
       - /etc/localtime:/etc/localtime:ro
     env_file:
@@ -26,7 +26,7 @@ services:
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
     command: [ "start.sh", "microservices" ]
     volumes:
-      - ${AZURE_MOUNT_PATH}/immich/upload:/usr/src/app/upload
+      - ${AZURE_MOUNT_PATH}/originals:/usr/src/app/upload
       - ${AZURE_MOUNT_PATH}:/usr/src/app/external
       - /etc/localtime:/etc/localtime:ro
     env_file:
