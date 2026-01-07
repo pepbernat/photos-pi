@@ -17,6 +17,10 @@ echo "☁️  Setting up Rclone for Azure Blob Storage..."
 # 1. Configure Rclone
 if rclone listremotes | grep -q "^${REMOTE_NAME}:"; then
     echo "✅ Remote '${REMOTE_NAME}' already exists."
+elif [ -n "$AZURE_ACCOUNT_NAME" ] && [ -n "$AZURE_ACCOUNT_KEY" ] && [ "$AZURE_ACCOUNT_NAME" != "CHANGE_ME" ]; then
+    echo "⚡️ Configuring '${REMOTE_NAME}' non-interactively..."
+    rclone config create "$REMOTE_NAME" azureblob account "${AZURE_ACCOUNT_NAME}" key "${AZURE_ACCOUNT_KEY}"
+    echo "✅ Remote '${REMOTE_NAME}' created."
 else
     echo "⚡️ Launching rclone config..."
     echo "   👉 Create a new remote named '${REMOTE_NAME}'"
