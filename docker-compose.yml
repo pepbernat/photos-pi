@@ -58,6 +58,8 @@ services:
       - ${SSD_MOUNT_PATH}/immich/model-cache:/cache
     env_file:
       - .env
+    environment:
+      - IMMICH_PORT=3003
     restart: always
 
   redis:
