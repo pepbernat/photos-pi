@@ -6,7 +6,9 @@ PROJECT_ROOT="$SCRIPT_DIR/.."
 
 # Load environment variables
 if [ -f "$PROJECT_ROOT/.env" ]; then
-  export $(cat "$PROJECT_ROOT/.env" | xargs)
+  set -a
+  source "$PROJECT_ROOT/.env"
+  set +a
 else
   echo "⚠️  No .env file found at $PROJECT_ROOT/.env"
   exit 1
