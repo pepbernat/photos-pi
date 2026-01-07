@@ -56,7 +56,7 @@ ExecStart=/usr/bin/rclone mount ${REMOTE_NAME}:${CONTAINER_NAME} ${AZURE_MOUNT_P
    --vfs-cache-mode writes \\
    --dir-cache-time 72h \\
    --log-level INFO \\
-   --log-file /var/log/rclone-mount.log
+   --log-file /home/$USER/rclone-mount.log
 ExecStop=/bin/fusermount -u ${AZURE_MOUNT_PATH}
 Restart=on-failure
 RestartSec=10
