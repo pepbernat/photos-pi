@@ -1,11 +1,11 @@
-# 📸 PhotoPrism on Raspberry Pi (Ultimate Edition)
+# 📸 Immich on Raspberry Pi (Ultimate Edition)
 
-![PhotoPrism + Raspberry Pi](https://img.shields.io/badge/PhotoPrism-Raspberry%20Pi-blue?style=for-the-badge&logo=raspberrypi)
+![Immich + Raspberry Pi](https://img.shields.io/badge/Immich-Raspberry%20Pi-blue?style=for-the-badge&logo=raspberrypi)
 ![Azure Blob Storage](https://img.shields.io/badge/Storage-Azure%20Blob-0078D4?style=for-the-badge&logo=microsoftazure)
 ![Cloudflare Tunnel](https://img.shields.io/badge/Access-Cloudflare%20Zero%20Trust-F38020?style=for-the-badge&logo=cloudflare)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-Welcome! This repository provides a **"Plug & Play"** setup to deploy your own **private Google Photos** on a Raspberry Pi, combining the power of PhotoPrism with the scalability of the cloud.
+Welcome! This repository provides a **"Plug & Play"** setup to deploy your own **private Google Photos** on a Raspberry Pi, combining the power of **Immich** with the scalability of the cloud.
 
 🇪🇸 **Leer esto en Español: [README.es.md](README.es.md)**
 
@@ -32,13 +32,13 @@ Welcome! This repository provides a **"Plug & Play"** setup to deploy your own *
     - **Azure Blob Storage:** Stores originals (TBs of photos at low cost).
     - **Local SSD:** Stores the database and cache, ensuring maximum speed.
 3. **Secure Remote Access:** No need to open router ports. Your site will be accessible from anywhere (`https://photos.yourdomain.com`) thanks to Cloudflare Tunnel.
-4. **Resilience:** Robust database (MariaDB) and automatic cloud backups.
+4. **Resilience:** Robust database (PostgreSQL) and automatic cloud backups.
 5. **Total Privacy:** You control your data.
 
 ## Architecture
 
 The system uses a smart hybrid architecture to balance cost and performance.
-To understand how it works under the hood (MariaDB, Cloudflare Tunnels, VFS cache system), check the **[Technical Architecture](docs/architecture.md)** document.
+To understand how it works under the hood (Postgres, Redis, Rclone cache), check the **Technical Architecture** (currently in Spanish: [docs/architecture.es.md](docs/architecture.es.md)).
 
 ## Requirements
 
@@ -95,21 +95,18 @@ Start the services with Docker Compose:
 docker compose up -d
 ```
 
-Wait a few minutes for it to start. You can access it at `https://photos.yourdomain.com` or `http://<YOUR-PI-IP>:2342`.
+Wait a few minutes for it to start. You can access it at `https://photos.yourdomain.com` or `http://<YOUR-PI-IP>:2283`.
 
-- **User:** `admin`
-- **Password:** The one you defined in the `.env` file.
+Create your admin account on the first login.
 
 ## Usage & Mobile Apps
 
-### Official PWA (Recommended)
+Download the native Immich app:
 
-The web interface is a PWA (Progressive Web App). Open your site in Chrome/Safari and tap **"Add to Home Screen"** to use it like a native full-screen app.
+- **Android:** [Google Play](https://play.google.com/store/apps/details?id=app.immich)
+- **iOS:** [App Store](https://apps.apple.com/app/immich/id1677386979)
 
-### Third-Party Apps
-
-- **Android:** [Gallery for PhotoPrism](https://play.google.com/store/apps/details?id=com.photoprism.gallery)
-- **iOS:** [PhotoSync](https://www.photosync-app.com/) (Ideal for auto-uploading photos).
+Enter your server URL (`https://photos.yourdomain.com`) and login.
 
 ## Backups
 
@@ -123,7 +120,7 @@ The system includes scripts to ensure you don't lose anything.
 If your Raspberry Pi fails, you can restore everything on a new installation by running:
 
 ```bash
-./scripts/restore_db.sh
+./scripts/restore_db.sh <backup_file>
 ```
 
 ## Contributing

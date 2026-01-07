@@ -1,54 +1,27 @@
 #!/bin/bash
-
-# Find the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-PROJECT_ROOT="$SCRIPT_DIR/.."
-
-# Load environment variables
-if [ -f "$PROJECT_ROOT/.env" ]; then
-  set -a
-  source "$PROJECT_ROOT/.env"
-  set +a
-else
-  echo "⚠️  No .env file found at $PROJECT_ROOT/.env"
-  exit 1
-fi
-
+# Backup script for Immich (PostgreSQL)
+# Definir timestamp
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_DIR="${AZURE_MOUNT_PATH}/backup"
+BACKUP_DIR="/mnt/azurephotos/backup"
 KEEP_DAYS=7
 
-echo "💾 Starting DB Backup to Azure..."
-
-# Verify Azure Mount
-if mountpoint -q "$AZURE_MOUNT_PATH"; then
-    FILENAME="db_backup_$TIMESTAMP.sql"
-    FILEPATH="$BACKUP_DIR/$FILENAME"
+# Verificar que el montaje de Azure está activo
+if mountpoint -q /mnt/azurephotos; then
+    echo "Starting backup to $BACKUP_DIR..."
     
-    # Execute Dump inside Docker Container
-    # Note: We use the container name 'mariadb' defined in docker-compose, assuming it's running
-    if docker ps | grep -q mariadb; then
-        docker exec mariadb mariadb-dump \
-            -u "$PHOTOPRISM_DATABASE_USER" \
-            -p"$PHOTOPRISM_DATABASE_PASSWORD" \
-            "$PHOTOPRISM_DATABASE_NAME" > "$FILEPATH"
-        
-        if [ $? -eq 0 ]; then
-            echo "✅ Backup created: $FILENAME"
-            
-            # Compress
-            gzip "$FILEPATH"
-            echo "📦 Compressed: $FILENAME.gz"
-            
-            # Cleanup old backups
-            find "$BACKUP_DIR" -name "db_backup_*.sql.gz" -mtime +$KEEP_DAYS -delete
-            echo "🧹 Old backups cleaned."
-        else
-            echo "❌ Error dumping database."
-        fi
-    else
-        echo "❌ MariaDB container is not running."
-    fi
+    # Crear directorio si no existe (aunque debería estar en azure)
+    mkdir -p "$BACKUP_DIR"
+
+    # Volcar base de datos directamente a Azure
+    # Usamos docker exec para ejecutar pg_dumpall dentro del contenedor
+    docker exec immich_postgres pg_dumpall -c -U postgres | gzip > "$BACKUP_DIR/db_backup_immich_$TIMESTAMP.sql.gz"
+    
+    echo "Backup completed: $BACKUP_DIR/db_backup_immich_$TIMESTAMP.sql.gz"
+
+    # Limpiar backups antiguos (mayores a 7 días)
+    echo "Cleaning up backups older than $KEEP_DAYS days..."
+    find "$BACKUP_DIR" -name "db_backup_immich_*.sql.gz" -mtime +$KEEP_DAYS -delete
 else
-    echo "❌ Error: Azure mountpoint not found at $AZURE_MOUNT_PATH"
+    echo "Error: Azure no está montado en /mnt/azurephotos"
+    exit 1
 fi

@@ -1,39 +1,25 @@
 #!/bin/bash
-set -e
+# Script de restauración para Immich (PostgreSQL)
 
-# Load environment variables
-if [ -f .env ]; then
-  export $(cat .env | xargs)
-else
-  echo "⚠️  No .env file found."
-  exit 1
-fi
-
-BACKUP_DIR="${AZURE_MOUNT_PATH}/backup"
-
-echo "🆘 STARTING DISASTER RECOVERY RESTORE..."
-echo "⚠️  WARNING: This will OVERWRITE the current database with the backup."
-echo "⚠️  Make sure PhotoPrism is stopped or idle."
-echo ""
-echo "Available backups in Azure:"
-ls -lh "$BACKUP_DIR"/*.sql.gz | awk '{print $9 " (" $5 ")"}'
-echo ""
-
-read -p "Paste the full path of the backup file to restore: " BACKUP_FILE
-
-if [ ! -f "$BACKUP_FILE" ]; then
-    echo "❌ File not found."
+if [ -z "$1" ]; then
+    echo "Uso: $0 <archivo_backup.sql.gz>"
     exit 1
 fi
 
-echo "⏳ Restoring from $BACKUP_FILE..."
+BACKUP_FILE="$1"
 
-# Unzip and pipe directly to mariadb client inside container
-zcat "$BACKUP_FILE" | docker exec -i mariadb mariadb -u "$PHOTOPRISM_DATABASE_USER" -p"$PHOTOPRISM_DATABASE_PASSWORD" "$PHOTOPRISM_DATABASE_NAME"
+if [ ! -f "$BACKUP_FILE" ]; then
+    echo "Error: El archivo $BACKUP_FILE no existe"
+    exit 1
+fi
 
-if [ $? -eq 0 ]; then
-    echo "✅ RESTORE COMPLETE! Your database is back."
-    echo "🔄 It is recommended to restart the container: docker compose restart photoprism"
+echo "ADVERTENCIA: Esto sobrescribirá la base de datos actual de Immich."
+read -p "¿Estás seguro? (s/N): " confirm
+
+if [[ $confirm == [sS] || $confirm == [sS][iI] ]]; then
+    echo "Restaurando desde $BACKUP_FILE..."
+    gunzip -c "$BACKUP_FILE" | docker exec -i immich_postgres psql -U postgres -d immich
+    echo "Restauración completada."
 else
-    echo "❌ Restore failed."
+    echo "Cancelado."
 fi
