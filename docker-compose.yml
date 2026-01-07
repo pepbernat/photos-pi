@@ -7,6 +7,9 @@ services:
     command: [ "start.sh", "immich" ]
     volumes:
       - ${AZURE_MOUNT_PATH}/originals:/usr/src/app/upload
+      - ${SSD_MOUNT_PATH}/immich/thumbs:/usr/src/app/upload/thumbs
+      - ${SSD_MOUNT_PATH}/immich/encoded-video:/usr/src/app/upload/encoded-video
+      - ${SSD_MOUNT_PATH}/immich/profile:/usr/src/app/upload/profile
       - ${AZURE_MOUNT_PATH}:/usr/src/app/external
       - /etc/localtime:/etc/localtime:ro
     env_file:
@@ -27,6 +30,9 @@ services:
     command: [ "start.sh", "microservices" ]
     volumes:
       - ${AZURE_MOUNT_PATH}/originals:/usr/src/app/upload
+      - ${SSD_MOUNT_PATH}/immich/thumbs:/usr/src/app/upload/thumbs
+      - ${SSD_MOUNT_PATH}/immich/encoded-video:/usr/src/app/upload/encoded-video
+      - ${SSD_MOUNT_PATH}/immich/profile:/usr/src/app/upload/profile
       - ${AZURE_MOUNT_PATH}:/usr/src/app/external
       - /etc/localtime:/etc/localtime:ro
     env_file:
