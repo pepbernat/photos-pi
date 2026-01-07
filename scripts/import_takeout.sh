@@ -1,12 +1,10 @@
 #!/bin/bash
-# Script to import Google Takeout archives into Immich using the CLI
+# Script to import Google Takeout archives into Immich using local CLI
 # Usage: ./import_takeout.sh /path/to/takeout_directory
 
 INPUT_PATH=$1
 TEMP_BASE="/mnt/data/immich/import_temp"
-IMMICH_CLI_IMAGE="ghcr.io/immich-app/immich-cli:latest"
-NETWORK="photos-pi_default"
-DEFAULT_URL="http://immich_server:3001/api"
+DEFAULT_URL="http://127.0.0.1:2283/api"
 
 # 1. Validation
 if [ -z "$INPUT_PATH" ]; then
@@ -19,7 +17,11 @@ if [ -z "$IMMICH_API_KEY" ]; then
     echo "Please create an API Key in Immich (Administration > Users > Click User > API Keys)"
     read -sp "Enter your Immich API Key: " IMMICH_API_KEY
     echo ""
+    export IMMICH_API_KEY
 fi
+
+# Set Instance URL if not provided
+export IMMICH_INSTANCE_URL="${IMMICH_INSTANCE_URL:-$DEFAULT_URL}"
 
 # 2. Main Processing Function
 process_file() {
@@ -49,20 +51,14 @@ process_file() {
         return
     fi
     
-    # ensure permissions for docker mount
+    # ensure permissions 
     sudo chown -R 1000:1000 "$EXTRACT_DIR"
 
     # 5. Upload via Immich CLI
-    echo "☁️  Uploading to Immich..."
+    echo "☁️  Uploading to Immich ($IMMICH_INSTANCE_URL)..."
     
-    # We run the CLI container attached to the same network as Immich to use specific container names
-    docker run --rm \
-        --network "$NETWORK" \
-        -v "$EXTRACT_DIR:/import:ro" \
-        -e IMMICH_INSTANCE_URL="$DEFAULT_URL" \
-        -e IMMICH_API_KEY="$IMMICH_API_KEY" \
-        "$IMMICH_CLI_IMAGE" \
-        upload --recursive /import
+    # Run local immich command
+    immich upload --recursive "$EXTRACT_DIR"
 
     # 6. Cleanup
     echo "🧹 Cleaning up temp directory..."
