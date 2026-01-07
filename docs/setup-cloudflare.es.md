@@ -4,7 +4,7 @@
 
 ---
 
-Para que tu PhotoPrism sea accesible desde internet de forma segura (<https://fotos.tudominio.com>) sin abrir puertos en tu router, usamos **Cloudflare Tunnel**.
+Para que tu Immich sea accesible desde internet de forma segura (<https://fotos.tudominio.com>) sin abrir puertos en tu router, usamos **Cloudflare Tunnel**.
 
 Sigue estos pasos para obtener tu **Token** necesario para el archivo `.env`.
 
@@ -46,8 +46,8 @@ Sigue estos pasos para obtener tu **Token** necesario para el archivo `.env`.
     * **Subdomain**: `fotos` (o lo que quieras).
     * **Domain**: `tudominio.com`.
     * **Service**: `HTTP`.
-    * **URL**: `photoprism:2342`
-        * *Nota: Ponemos "photoprism" porque es el nombre del contenedor en nuestra red Docker.*
+    * **URL**: `immich_server:3001`
+        * *Nota: Ponemos "immich_server" porque es el nombre del contenedor en nuestra red Docker.*
 3. Guarda los cambios (`Save Tunnel`).
 
 ## 5. ¡Listo

@@ -71,8 +71,8 @@ Raspberry Pi
 │   └── /immich/redis         (Redis data)
 │
 └── Azure Blob Storage (montado con rclone) /mnt/azurephotos
-    ├── /immich/upload        (Nuevas subidas desde apps)
-    ├── /originals            (Fotos antiguas de PhotoPrism - Read Only)
+    ├── /originals            (Fotos antiguas y nuevas subidas de Immich)
+
     └── /backup               (Dumps diarios de Postgres)
 ```
 
@@ -135,8 +135,7 @@ Se mantiene la configuración existente, montada en `/mnt/azurephotos`.
 
 Dentro de Azure tendremos:
 
-- `/immich/upload`: Para las nuevas fotos subidas por la app.
-- `/originals`: Las fotos antiguas (legacy PhotoPrism).
+- `/originals`: Almacén unificado para fotos antiguas y nuevas subidas.
 
 ---
 
@@ -176,7 +175,7 @@ Dado que la base de datos de PhotoPrism (MariaDB) no es compatible con Immich (P
 
 2. **Nuevas Fotos:**
    - Se subirán via App Móvil o Web.
-   - Se guardarán en `/mnt/azurephotos/immich/upload`.
+   - Se guardarán en `/mnt/azurephotos/originals`.
 
 ---
 
