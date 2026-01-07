@@ -124,7 +124,12 @@ Estructura usada en el SSD local:
 ```text
 /mnt/ssd/immich/
 ├── postgres
-└── model-cache
+├── model-cache
+├── thumbs
+├── encoded-video
+├── profile
+├── upload
+└── backups
 ```
 
 ---
